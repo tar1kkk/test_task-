@@ -7,17 +7,16 @@ const initialState = {
     status: 'loading',
     categoryFilter: '',
     currentPage: 1,
+    search: '',
     recipesPerPage: 5,
     list: [],
 };
 
-export const getData = createAsyncThunk('items/getData', async ({searchTerm, category}) => {
+export const getData = createAsyncThunk('items/getData', async ({category}) => {
     try {
         let url;
         if (category) {
             url = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`;
-        } else if (searchTerm) {
-            url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchTerm}`;
         } else {
             url = `https://www.themealdb.com/api/json/v1/1/search.php?s=`;
         }
@@ -44,6 +43,9 @@ const recipesReducer = createSlice({
             if (!recipeExists) {
                 state.list.push(action.payload);
             }
+        },
+        setSearch(state, action) {
+            state.search = action.payload;
         }
 
     },
@@ -64,5 +66,5 @@ const recipesReducer = createSlice({
     }
 });
 
-export const {setPage, setCategoryFilter, setListFav} = recipesReducer.actions;
+export const {setPage, setCategoryFilter, setListFav, setSearch} = recipesReducer.actions;
 export default recipesReducer.reducer;

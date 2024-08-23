@@ -12,17 +12,24 @@ import {NavLink} from "react-router-dom";
 
 function RecipesListPage() {
     const dispatch = useDispatch();
-    const { recipes, status, currentPage, recipesPerPage } = useSelector((state) => state.recipesReducer);
+    const { recipes, status, currentPage, recipesPerPage,search } = useSelector((state) => state.recipesReducer);
     const { categories } = useSelector((state) => state.getCategories);
 
     useEffect(() => {
         dispatch(getDataCategories());
-        dispatch(getData({ searchTerm: '', category: '' }));
+        dispatch(getData({ category: '' }));
     }, [dispatch]);
+
+    const filteredRecipes = recipes.filter((recipe) =>
+        recipe.strMeal.toLowerCase().includes(search.toLowerCase())
+    );
 
     const indexOfLastRecipe = currentPage * recipesPerPage;
     const indexOfFirstRecipe = indexOfLastRecipe - recipesPerPage;
-    const currentRecipes = recipes ? recipes.slice(indexOfFirstRecipe, indexOfLastRecipe) : [];
+
+    const currentRecipes = filteredRecipes.slice(indexOfFirstRecipe, indexOfLastRecipe);
+
+    console.log(currentRecipes);
 
     return (
         <Flex direction="column" minHeight="100vh">
@@ -31,9 +38,9 @@ function RecipesListPage() {
                 {status !== 'loading' && (
                     <>
                         <Flex style={{ margin: '20px 0' }}>
-                            <SearchBar recipes={recipes} />
+                            <SearchBar recipes={recipes}  />
                             <CategoryFilter categories={categories} />
-                            <Button><NavLink to={`/lit st`}>Fav</NavLink></Button>
+                            <Button><NavLink to={`/list`}>Fav</NavLink></Button>
                         </Flex>
                         <hr />
                         <RecipeCard recipes={currentRecipes} />

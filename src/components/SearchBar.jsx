@@ -1,32 +1,24 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Input } from "@chakra-ui/react";
-import { useDispatch } from 'react-redux';
+import React, {useState, useEffect, useCallback} from 'react';
+import {Input} from "@chakra-ui/react";
+import {useDispatch} from 'react-redux';
 import debounce from 'lodash.debounce';
-import { getData } from "../redux/slice/recipesReducer";
+import {getData, setSearch} from "../redux/slice/recipesReducer";
 
 function SearchBar({recipes}) {
     const [searchTerm, setSearchTerm] = useState('');
     const dispatch = useDispatch();
 
-    const debouncedSearch = useCallback(
-        debounce((term) => {
-            dispatch(getData({ searchTerm: term, category: '' }));
+    const debouncedDispatch = useCallback(
+        debounce((value) => {
+            dispatch(setSearch(value));
         }, 1000),
-        []
+        [dispatch]
     );
 
-    useEffect(() => {
-        if (searchTerm.trim() !== '') {
-            debouncedSearch(searchTerm);
-        }
-        return () => {
-            debouncedSearch.cancel();
-        };
-    }, [searchTerm, debouncedSearch]);
-
     const handleChange = (e) => {
-        e.preventDefault();
-        setSearchTerm(e.target.value);
+        const value = e.target.value;
+        setSearchTerm(value);
+        debouncedDispatch(value);
     };
 
     return (
